@@ -1,6 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { ActionButtonComponent } from '../action-button/action-button.component';
 import { JsonPipe } from '@angular/common';
+import { invitedUsers, pinnedUsers, searchResults, suggestedUsers } from './users.data';
 
 interface User {
 	id: string;
@@ -18,14 +19,18 @@ export class UsersPageComponent {
 	protected readonly isAdmin = signal(false);
 	protected readonly selection = signal<Set<string>>(new Set());
 
-	protected readonly users: User[] = [
-		{ id: '1', name: 'Alice Johnson', email: 'alice@example.com' },
-		{ id: '2', name: 'Bob Smith', email: 'bob@example.com' },
-		{ id: '3', name: 'Charlie Brown', email: 'charlie@example.com' },
-		{ id: '4', name: 'Diana Prince', email: 'diana@example.com' },
-		{ id: '5', name: 'Eve Wilson', email: 'eve@example.com' },
-		{ id: '6', name: 'Frank Miller', email: 'frank@example.com' }
-	];
+	protected readonly pinnedUsers = pinnedUsers();
+	protected readonly searchResults = searchResults();
+	protected readonly suggestedUsers = suggestedUsers();
+	protected readonly invitedUsers = invitedUsers();
+
+	//-- Before - Replaced with template variable
+	protected readonly users = computed(() => [
+		...this.pinnedUsers, 
+		...this.searchResults, 
+		...this.suggestedUsers, 
+		...this.invitedUsers
+	]);
 
 	protected readonly selectedCount = computed(() => this.selection().size);
 	protected readonly isBusy = signal(false);
@@ -40,9 +45,9 @@ export class UsersPageComponent {
 
 	protected toggleAllSelection() {
 		this.selection.update(selected =>
-			selected.size === this.users.length
+			selected.size === this.users().length
 				? new Set<string>()
-				: new Set(this.users.map(u => u.id))
+				: new Set(this.users().map(u => u.id))
 		);
 	}
 
@@ -56,5 +61,9 @@ export class UsersPageComponent {
 
 	protected deleteAction() {
 		console.log('Action: delete', Array.from(this.selection()));
+	}
+
+	protected track(...args: unknown[]) {
+		console.log('Telemetry:', args);
 	}
 }

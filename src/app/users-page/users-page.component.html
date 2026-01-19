@@ -1,3 +1,11 @@
+<!-- After -->
+@let users = [
+...pinnedUsers,
+...searchResults,
+...suggestedUsers,
+...invitedUsers
+];
+
 <div class="page-container">
 	<div class="controls">
 		<label>
@@ -20,6 +28,15 @@
 	<div class="users-section">
 		<div class="users-header">
 			<label>
+				<!-- Before -->
+				<!-- <input
+					type="checkbox"
+					[checked]="selection().size === users().length"
+					[indeterminate]="selection().size > 0 && selection().size < users().length"
+					(change)="toggleAllSelection()"
+				/> -->
+
+				<!-- After -->
 				<input
 					type="checkbox"
 					[checked]="selection().size === users.length"
@@ -34,6 +51,9 @@
 		</div>
 
 		<ul class="users-list">
+			<!-- Before -->
+			<!-- @for (user of users(); track user.id) { -->
+
 			@for (user of users; track user.id) {
 				<li>
 					<label>
@@ -74,18 +94,18 @@
 						}
 
 						<!-- After -->
-						@let baseDeleteConfig = {
+						@let sharedConfig = {
 							label: 'Delete',
 							icon: 'trash',
 							confirm: true,
 						};
-						@let deleteConfig = {
-							...baseDeleteConfig,
+						@let finalConfig = {
+							...sharedConfig,
 							tone: isAdmin() ? 'danger' : 'warning',
 							disabled: !isAdmin() || isBusy(),
 							telemetry: isAdmin() ? { event: 'delete_clicked', source: 'row_menu' } : {}
 						};
-						<app-action-button [config]="deleteConfig" />
+						<app-action-button [config]="finalConfig" />
 					</div>
 				</li>
 			}
