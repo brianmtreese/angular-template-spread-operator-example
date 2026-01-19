@@ -1,0 +1,94 @@
+<div class="page-container">
+	<div class="controls">
+		<label>
+			<input
+				type="checkbox"
+				[checked]="isAdmin()"
+				(change)="onAdminChange($event)"
+			/>
+			Admin
+		</label>
+		<label>
+			<input
+				type="checkbox"
+				[checked]="isBusy()"
+				(change)="onBusyChange($event)"
+			/>
+			Is Busy
+		</label>
+	</div>
+	<div class="users-section">
+		<div class="users-header">
+			<label>
+				<input
+					type="checkbox"
+					[checked]="selection().size === users.length"
+					[indeterminate]="selection().size > 0 && selection().size < users.length"
+					(change)="toggleAllSelection()"
+				/>
+				Select All
+			</label>
+			<span class="selection-count">
+				{{ selectedCount() }} selected
+			</span>
+		</div>
+
+		<ul class="users-list">
+			@for (user of users; track user.id) {
+				<li>
+					<label>
+						<input
+							type="checkbox"
+							[checked]="selection().has(user.id)"
+							(change)="toggleUserSelection(user.id)"
+						/>
+						<span class="user-info">
+							<strong>{{ user.name }}</strong>
+							<span class="email">{{ user.email }}</span>
+						</span>
+					</label>
+					<div class="user-actions">
+						<!-- Before -->
+						@if (isAdmin()) {
+							<app-action-button
+								[config]="{
+									label: 'Delete',
+									icon: 'trash',
+									tone: 'danger',
+									disabled: isBusy(),
+									confirm: true,
+									telemetry: { event: 'delete_clicked', source: 'row_menu' }
+								}"
+							/>
+						} @else {
+							<app-action-button
+								[config]="{
+									label: 'Delete',
+									tone: 'warning',
+									icon: 'trash',
+									disabled: true,
+									confirm: true,
+									telemetry: {}
+								}"
+							/>
+						}
+
+						<!-- After -->
+						@let baseDeleteConfig = {
+							label: 'Delete',
+							icon: 'trash',
+							confirm: true,
+						};
+						@let deleteConfig = {
+							...baseDeleteConfig,
+							tone: isAdmin() ? 'danger' : 'warning',
+							disabled: !isAdmin() || isBusy(),
+							telemetry: isAdmin() ? { event: 'delete_clicked', source: 'row_menu' } : {}
+						};
+						<app-action-button [config]="deleteConfig" />
+					</div>
+				</li>
+			}
+		</ul>
+	</div>
+</div>
