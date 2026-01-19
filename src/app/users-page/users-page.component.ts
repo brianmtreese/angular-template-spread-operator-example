@@ -1,13 +1,7 @@
 import { Component, computed, signal } from '@angular/core';
 import { ActionButtonComponent } from '../action-button/action-button.component';
 import { JsonPipe } from '@angular/common';
-import { invitedUsers, pinnedUsers, searchResults, suggestedUsers } from './users.data';
-
-interface User {
-	id: string;
-	name: string;
-	email: string;
-}
+import { invitedUsers, pinnedUsers, searchResults, suggestedUsers, User, updateUsersData } from './users.data';
 
 @Component({
 	selector: 'spread-demo-page',
@@ -19,17 +13,18 @@ export class UsersPageComponent {
 	protected readonly isAdmin = signal(true);
 	protected readonly selection = signal<Set<string>>(new Set());
 
-	protected readonly pinnedUsers = pinnedUsers();
-	protected readonly searchResults = searchResults();
-	protected readonly suggestedUsers = suggestedUsers();
-	protected readonly invitedUsers = invitedUsers();
+	// Expose the original signals directly so template can access them reactively
+	protected readonly pinnedUsers = pinnedUsers;
+	protected readonly searchResults = searchResults;
+	protected readonly suggestedUsers = suggestedUsers;
+	protected readonly invitedUsers = invitedUsers;
 
 	//-- Before - Replaced with template variable
 	protected readonly users = computed(() => [
-		...this.pinnedUsers, 
-		...this.searchResults, 
-		...this.suggestedUsers, 
-		...this.invitedUsers
+		...this.pinnedUsers(), 
+		...this.searchResults(), 
+		...this.suggestedUsers(), 
+		...this.invitedUsers()
 	]);
 
 	protected readonly selectedCount = computed(() => this.selection().size);
@@ -65,5 +60,9 @@ export class UsersPageComponent {
 
 	protected track(...args: unknown[]) {
 		console.log('Telemetry:', args);
+	}
+
+	protected modifyUsersList() {
+		updateUsersData();
 	}
 }

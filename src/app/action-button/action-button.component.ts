@@ -1,4 +1,4 @@
-import { Component, input } from '@angular/core';
+import { Component, input, output } from '@angular/core';
 
 export interface ActionButtonConfig {
 	label: string;
@@ -16,8 +16,10 @@ export interface ActionButtonConfig {
 })
 export class ActionButtonComponent {
 	readonly config = input.required<ActionButtonConfig>();
+	readonly clicked = output<void>();
 
 	protected handleClick() {
 		console.log('Action: click', this.config());
+		this.clicked.emit();
 	}
 }
