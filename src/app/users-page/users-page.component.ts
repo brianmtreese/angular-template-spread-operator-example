@@ -43,11 +43,11 @@ export class UsersPageComponent {
 		});
 	}
 
-	protected toggleAllSelection() {
+	protected toggleAllSelection(users: User[]) {
 		this.selection.update(selected =>
-			selected.size === this.users().length
+			selected.size === users.length
 				? new Set<string>()
-				: new Set(this.users().map(u => u.id))
+				: new Set(users.map(u => u.id))
 		);
 	}
 
