@@ -16,7 +16,7 @@ interface User {
 	styleUrl: './users-page.component.scss'
 })
 export class UsersPageComponent {
-	protected readonly isAdmin = signal(false);
+	protected readonly isAdmin = signal(true);
 	protected readonly selection = signal<Set<string>>(new Set());
 
 	protected readonly pinnedUsers = pinnedUsers();

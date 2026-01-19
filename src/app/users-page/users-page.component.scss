@@ -28,6 +28,14 @@ h1 {
 		color: white;
 		font-weight: 500;
 	}
+
+	div {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		font-weight: 500;
+		margin-inline-start: auto;
+	}
 }
 
 .users-section {

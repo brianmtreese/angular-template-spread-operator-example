@@ -1,10 +1,23 @@
 <!-- After -->
 @let users = [
-...pinnedUsers,
-...searchResults,
-...suggestedUsers,
-...invitedUsers
+	...pinnedUsers,
+	...searchResults,
+	...suggestedUsers,
+	...invitedUsers
 ];
+
+<!-- After -->
+@let sharedButtonConfig = {
+	label: 'Delete',
+	icon: 'trash',
+	confirm: true,
+};
+
+@let sharedAdminButtonConfig = {
+	...sharedButtonConfig,
+	tone: 'danger',
+	disabled: isBusy(),
+};
 
 <div class="page-container">
 	<div class="controls">
@@ -24,6 +37,31 @@
 			/>
 			Is Busy
 		</label>
+		@if (isAdmin()) {
+			<div>
+				<label>Delete all users</label>
+
+				<!-- Before -->
+				<app-action-button
+					[config]="{
+						label: 'Delete',
+						icon: 'trash',
+						confirm: true,
+						tone: 'danger',
+						disabled: isBusy(),
+						telemetry: { event: 'delete_all_clicked', source: 'controls' }
+					}"
+				/>
+
+				<!-- After -->
+				<app-action-button
+					[config]="{
+						...sharedAdminButtonConfig,
+						telemetry: { event: 'delete_all_clicked', source: 'controls' }
+					}"
+				/>
+			</div>
+		}
 	</div>
 	<div class="users-section">
 		<div class="users-header">
@@ -74,38 +112,39 @@
 								[config]="{
 									label: 'Delete',
 									icon: 'trash',
+									confirm: true,
 									tone: 'danger',
 									disabled: isBusy(),
-									confirm: true,
-									telemetry: { event: 'delete_clicked', source: 'row_menu' }
+									telemetry: { event: 'admin_delete_clicked', source: 'row_menu' }
 								}"
 							/>
 						} @else {
 							<app-action-button
 								[config]="{
 									label: 'Delete',
-									tone: 'warning',
 									icon: 'trash',
-									disabled: true,
 									confirm: true,
+									tone: 'warning',
+									disabled: true,
 									telemetry: {}
 								}"
 							/>
 						}
 
 						<!-- After -->
-						@let sharedConfig = {
-							label: 'Delete',
-							icon: 'trash',
-							confirm: true,
-						};
-						@let finalConfig = {
-							...sharedConfig,
-							tone: isAdmin() ? 'danger' : 'warning',
-							disabled: !isAdmin() || isBusy(),
-							telemetry: isAdmin() ? { event: 'delete_clicked', source: 'row_menu' } : {}
-						};
-						<app-action-button [config]="finalConfig" />
+						@if (isAdmin()) {
+							<app-action-button [config]="{
+								...sharedAdminButtonConfig,
+								telemetry: { event: 'admin_delete_clicked', source: 'row_menu' }
+							}" />
+						} @else {
+							<app-action-button [config]="{
+								...sharedButtonConfig,
+								tone: 'warning',
+								disabled: true,
+								telemetry: {}
+							}" />
+						}
 					</div>
 				</li>
 			}
